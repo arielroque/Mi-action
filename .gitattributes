@@ -1,0 +1,1 @@
+frontend/node_modules/electron/dist/electron filter=lfs diff=lfs merge=lfs -text
