@@ -4,6 +4,11 @@ body{
 
 }
 
+.dropdown{
+    margin-right: 80px;
+}
+
+
 .navbar-style{
     background-color: #151D19;
 }
@@ -31,9 +36,6 @@ body{
     justify-content: center;
     border-radius: 50%;
 }
-
-
-
 .chart-block{
     margin-top: 20px;
 }

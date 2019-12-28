@@ -5,6 +5,41 @@
 // selectively enable features needed in the rendering
 // process.
 
+
+
+// Functions
+
+dropdownClick = () => {
+
+    //Remove old elements
+
+    var elements = document.getElementsByClassName("dropdown-item");
+
+    while (elements[0]) {
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+
+    // Refresh elements
+
+    for (let i = 0; i < 10; i++) {
+        let dropItem = document.createElement("button");
+        dropItem.className = "dropdown-item";
+        dropItem.type = "button";
+        dropItem.innerHTML = "oi";
+        dropItem.id = "di" + i;
+        dropItem.onclick = ()=>{
+            alert("opaaaa");
+        }
+        document.getElementById("dropdown-bluetooth").appendChild(dropItem);
+    }
+}
+
+dropdownSelectItem = (e) => {
+    console.log(e);
+}
+
+// Chart Config
+
 var ctx1 = document.getElementById('stepsChart');
 var stepsChart = new Chart(ctx1, {
     type: 'line',
@@ -46,3 +81,8 @@ var heartChart = new Chart(ctx2, {
         }
     }
 });
+
+// Trigger Listenings 
+
+document.getElementById("dropdownMenuLink").addEventListener("click", dropdownClick);
+//document.getElementsByClassName("dropdown-item").addEventListener("click", dropdownSelectItem);
