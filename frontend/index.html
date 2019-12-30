@@ -3,8 +3,8 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-  <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+  <meta http-equiv="Content-Security-Policy"
+    content="font-src 'self' data:; img-src 'self' data:; default-src 'self' http://127.0.0.1:5000/">
 
   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.css" />
@@ -14,6 +14,7 @@
   <script src='node_modules/jquery/jquery.min.js'></script>
   <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
   <script src="node_modules/chart.js/dist/Chart.min.js"></script>
+  <script type="module" src="js/requests.js"></script>
 
   <title>Mi action</title>
 
@@ -30,14 +31,16 @@
     </a>
 
     <div class="btn-group">
-        <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Desconnected
-        </button>
-
-        <div class="dropdown-menu dropdown-menu-right" id="dropdown-bluetooth">
-          
-        </div>
+      <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdown-devices"  data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        Desconnected
+      </button>
+      <div class="dropdown-menu dropdown-menu-right" id="dropdown-bluetooth">
+        <button class="dropdown-item" type="button">Searching devices...</button>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" type="button">Refresh</button>
       </div>
+    </div>
 
   </nav>
 

@@ -1,0 +1,5 @@
+[console_scripts]
+blescan = bluepy.blescan:main
+sensortag = bluepy.sensortag:main
+thingy52 = bluepy.thingy52:main
+

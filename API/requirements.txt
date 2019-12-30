@@ -1,0 +1,5 @@
+bluepy
+pycrypto
+curses-menu
+crc16
+flask-restful

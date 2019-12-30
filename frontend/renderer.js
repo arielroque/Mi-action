@@ -6,10 +6,60 @@
 // process.
 
 
-
 // Functions
 
+
+connectDevice = (url) => {
+    let request = new XMLHttpRequest();
+    request.open("POST", url, false);
+    request.send(null);
+
+    let response = (JSON.parse(request.responseText)).Authentication;
+    if (response == "True") {
+        console.log("Connected");
+        document.getElementById("dropdown-devices").innerHTML = "Connected";
+    }
+
+    else {
+        console.log("Ocorreu um erro");
+        document.getElementById("dropdown-devices").innerHTML = "Desconnected";
+        alert("Failed to connect to device")
+    }
+}
+
+getBluetoothDevices = (theUrl) => {
+    let request = new XMLHttpRequest();
+    request.open("GET", theUrl, false);
+    request.send(null);
+
+    var devices = (JSON.parse(request.responseText).Devices);
+    console.log(devices);
+    console.log(devices[0].address);
+    console.log(devices.lenght);
+
+    for (let i = 0; i < devices.length; i++) {
+        let dropItem = document.createElement("button");
+        dropItem.className = "dropdown-item";
+        dropItem.type = "button";
+        dropItem.innerHTML = devices[i].name;
+        dropItem.id = "di" + i;
+        dropItem.onclick = () => {
+            document.getElementById("dropdown-devices").innerHTML = "Connecting...";
+            connectDevice("http://127.0.0.1:5000/auth/" + devices[i].address);
+
+        }
+        document.getElementById("dropdown-bluetooth").appendChild(dropItem);
+    }
+
+
+    console.log(request.responseText);
+}
+
+
 dropdownClick = () => {
+
+
+    document.getElementById("dropdown-devices").innerHTML = "Searching";
 
     //Remove old elements
 
@@ -21,17 +71,7 @@ dropdownClick = () => {
 
     // Refresh elements
 
-    for (let i = 0; i < 10; i++) {
-        let dropItem = document.createElement("button");
-        dropItem.className = "dropdown-item";
-        dropItem.type = "button";
-        dropItem.innerHTML = "oi";
-        dropItem.id = "di" + i;
-        dropItem.onclick = ()=>{
-            alert("opaaaa");
-        }
-        document.getElementById("dropdown-bluetooth").appendChild(dropItem);
-    }
+    getBluetoothDevices("http://127.0.0.1:5000/devices");
 }
 
 dropdownSelectItem = (e) => {
@@ -84,5 +124,5 @@ var heartChart = new Chart(ctx2, {
 
 // Trigger Listenings 
 
-document.getElementById("dropdownMenuLink").addEventListener("click", dropdownClick);
+document.getElementById("dropdown-devices").addEventListener("click", dropdownClick);
 //document.getElementsByClassName("dropdown-item").addEventListener("click", dropdownSelectItem);
