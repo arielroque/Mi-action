@@ -170,7 +170,7 @@ class MiBand3(Peripheral):
 
     def _parse_raw_accel(self, bytes):
         res = []
-        for i in xrange(3):
+        for i in range(3):
             g = struct.unpack('hhh', bytes[2 + i * 6:8 + i * 6])
             res.append({'x': g[0], 'y': g[1], 'wtf': g[2]})
         return res
@@ -271,5 +271,115 @@ class MiBand3(Peripheral):
             self._log.error(self.state)
             return False
 
-    def disableConnection(self):
-        return "Disconnected"
+    def get_battery_info(self):
+        char = self.svc_1.getCharacteristics(UUIDS.CHARACTERISTIC_BATTERY)[0]
+        return self._parse_battery_response(char.read())
+
+    def get_hrdw_revision(self):
+        svc = self.getServiceByUUID(UUIDS.SERVICE_DEVICE_INFO)
+        char = svc.getCharacteristics(UUIDS.CHARACTERISTIC_HRDW_REVISION)[0]
+        data = char.read()
+        return data
+
+    def get_steps(self):
+        char = self.svc_1.getCharacteristics(UUIDS.CHARACTERISTIC_STEPS)[0]
+        a = char.read()
+
+        steps = struct.unpack('h', a[1:3])[0] if (len(a) >= 3) else None
+        meters = struct.unpack('h', a[5:7])[0] if len(a) >= 7 else None
+
+        return {
+            "Steps": steps,
+            "Meters": meters}
+
+    def send_alert(self, _type):
+        svc = self.getServiceByUUID(UUIDS.SERVICE_ALERT)
+        char = svc.getCharacteristics(UUIDS.CHARACTERISTIC_ALERT)[0]
+        char.write(_type)
+
+    def find_miband(self, type):
+        if type == 5:
+            base_value = '\x05\x01'
+        elif type == 4:
+            base_value = '\x04\x01'
+        elif type == 3:
+            base_value = '\x03\x01'
+        svc = self.getServiceByUUID(UUIDS.SERVICE_ALERT_NOTIFICATION)
+        char = svc.getCharacteristics(UUIDS.CHARACTERISTIC_CUSTOM_ALERT)[0]
+        char.write(base_value+"Find Miband", withResponse=True)
+
+    def start_raw_data_realtime(self, heart_measure_callback=None, heart_raw_callback=None, accel_raw_callback=None):
+        char_m = self.svc_heart.getCharacteristics(
+            UUIDS.CHARACTERISTIC_HEART_RATE_MEASURE)[0]
+        char_d = char_m.getDescriptors(
+            forUUID=UUIDS.NOTIFICATION_DESCRIPTOR)[0]
+        char_ctrl = self.svc_heart.getCharacteristics(
+            UUIDS.CHARACTERISTIC_HEART_RATE_CONTROL)[0]
+
+        if heart_measure_callback:
+            self.heart_measure_callback = heart_measure_callback
+        if heart_raw_callback:
+            self.heart_raw_callback = heart_raw_callback
+        if accel_raw_callback:
+            self.accel_raw_callback = accel_raw_callback
+
+        char_sensor = self.svc_1.getCharacteristics(
+            UUIDS.CHARACTERISTIC_SENSOR)[0]
+
+        # stop heart monitor continues & manual
+        char_ctrl.write(b'\x15\x02\x00', True)
+        char_ctrl.write(b'\x15\x01\x00', True)
+        # WTF
+        # char_sens_d1.write(b'\x01\x00', True)
+        # enabling accelerometer & heart monitor raw data notifications
+        char_sensor.write(b'\x01\x03\x19')
+        # IMO: enablee heart monitor notifications
+        char_d.write(b'\x01\x00', True)
+        # start hear monitor continues
+        char_ctrl.write(b'\x15\x01\x01', True)
+        # WTF
+        char_sensor.write(b'\x02')
+        t = time.time()
+        t_start = t
+        while True:
+            self.waitForNotifications(0.5)
+            self._parse_queue()
+            # send ping request every 12 sec
+            print(time.time()-t)
+            if (time.time() - t) >= 12:
+                char_ctrl.write(b'\x16', True)
+                t = time.time()
+
+            if (time.time() - t_start) >= 20:
+                self.stop_realtime()
+                break
+
+    def stop_realtime(self):
+        char_m = self.svc_heart.getCharacteristics(
+            UUIDS.CHARACTERISTIC_HEART_RATE_MEASURE)[0]
+        char_d = char_m.getDescriptors(
+            forUUID=UUIDS.NOTIFICATION_DESCRIPTOR)[0]
+        char_ctrl = self.svc_heart.getCharacteristics(
+            UUIDS.CHARACTERISTIC_HEART_RATE_CONTROL)[0]
+
+        char_sensor1 = self.svc_1.getCharacteristics(
+            UUIDS.CHARACTERISTIC_HZ)[0]
+        char_sens_d1 = char_sensor1.getDescriptors(
+            forUUID=UUIDS.NOTIFICATION_DESCRIPTOR)[0]
+
+        char_sensor2 = self.svc_1.getCharacteristics(
+            UUIDS.CHARACTERISTIC_SENSOR)[0]
+
+        # stop heart monitor continues
+        char_ctrl.write(b'\x15\x01\x00', True)
+        char_ctrl.write(b'\x15\x01\x00', True)
+        # IMO: stop heart monitor notifications
+        char_d.write(b'\x00\x00', True)
+        # WTF
+        char_sensor2.write(b'\x03')
+        # IMO: stop notifications from sensors
+        char_sens_d1.write(b'\x00\x00', True)
+
+        self.heart_measure_callback = None
+        self.heart_raw_callback = None
+        self.accel_raw_callback = None

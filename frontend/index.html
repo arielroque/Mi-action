@@ -31,14 +31,18 @@
     </a>
 
     <div class="btn-group">
-      <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdown-devices"  data-toggle="dropdown"
-        aria-haspopup="true" aria-expanded="false">
-        Desconnected
-      </button>
+      <button type="button" class="btn btn-secondary dropdown-toggle" id="dropdown-devices" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">Disconnected</button>
+
+
       <div class="dropdown-menu dropdown-menu-right" id="dropdown-bluetooth">
-        <button class="dropdown-item" type="button">Searching devices...</button>
-        <div class="dropdown-divider"></div>
-        <button class="dropdown-item" type="button">Refresh</button>
+
+        <div class="d-flex justify-content-center">
+          <h6 class="dropdown-header">Searching</h6>
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -54,7 +58,7 @@
             <div class="row">
               <div class="col">
                 <h5 class="card-title text-uppercase text-muted mb-0">Steps</h5>
-                <span class="h2 font-weight-bold mb-0">350,897</span>
+                <span class="h2 font-weight-bold mb-0" id="steps">No data available</span>
               </div>
               <div class="col-auto">
                 <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -76,7 +80,7 @@
             <div class="row">
               <div class="col">
                 <h5 class="card-title text-uppercase text-muted mb-0">Heart Rate</h5>
-                <span class="h2 font-weight-bold mb-0">2,356</span>
+                <span class="h2 font-weight-bold mb-0" id="heart-rate">No data available</span>
               </div>
               <div class="col-auto">
                 <div class="icon icon-shape bg-danger text-white rounded-circle shadow">

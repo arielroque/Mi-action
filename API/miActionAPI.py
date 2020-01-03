@@ -5,20 +5,40 @@ from flask_restful import Resource, Api, reqparse
 
 
 class Authentication(Resource):
-
-    def __init__(self):
-        self.band = None
-
     def post(self, address):
-        self.band = MiBand3(address, debug=True)
-        self.band.setSecurityLevel(level="medium")
-        self.band.initialize()
-        response = self.band.authenticate()
+        global miband
+
+        miband = MiBand3(address, debug=True)
+        miband.setSecurityLevel(level="medium")
+        miband.initialize()
+        response = miband.authenticate()
         return jsonify({"Authentication": str(response)})
 
     def delete(self):
-        self.band.disableConnection()
         return jsonify({"Status": "fdf"})
+
+
+class MibandSteps(Resource):
+    def get(self):
+        global miband
+        print(miband)
+        response = miband.get_steps()
+        return jsonify(response)
+
+
+class MibandBattery(Resource):
+    def get(self):
+        global miband
+        battery = miband.get_battery_info()
+        return jsonify({"Battery", battery})
+
+
+class MibandHeartRate(Resource):
+    def get(self):
+        global miband, heartRate
+        miband.start_raw_data_realtime(heart_measure_callback=handleHeartRate)
+
+        return jsonify({"HeartRate": heartRate})
 
 
 class BluetoothDevices(Resource):
@@ -27,12 +47,23 @@ class BluetoothDevices(Resource):
         return jsonify({"Devices": bluetoothScanner.discover()})
 
 
+def handleHeartRate(rate):
+    global heartRate
+    heartRate = rate
+
+
+miband = None
+heartRate = None
+
 app = Flask(__name__)
 api = Api(app)
 parser = reqparse.RequestParser()
 
 api.add_resource(Authentication, '/auth', '/auth/<string:address>')
 api.add_resource(BluetoothDevices, '/devices')
+api.add_resource(MibandSteps, '/steps')
+api.add_resource(MibandHeartRate, '/heart')
+api.add_resource(MibandBattery, '/battery')
 
 
 if(__name__ == '__main__'):

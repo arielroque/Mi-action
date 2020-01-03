@@ -6,76 +6,200 @@
 // process.
 
 
+// Variables
+
+let isDropdownActive = false;
+
+
 // Functions
 
-
 connectDevice = (url) => {
-    let request = new XMLHttpRequest();
-    request.open("POST", url, false);
-    request.send(null);
+    document.getElementById("dropdown-devices").innerHTML = "Connecting";
 
-    let response = (JSON.parse(request.responseText)).Authentication;
-    if (response == "True") {
-        console.log("Connected");
-        document.getElementById("dropdown-devices").innerHTML = "Connected";
-    }
-
-    else {
-        console.log("Ocorreu um erro");
-        document.getElementById("dropdown-devices").innerHTML = "Desconnected";
-        alert("Failed to connect to device")
-    }
-}
-
-getBluetoothDevices = (theUrl) => {
-    let request = new XMLHttpRequest();
-    request.open("GET", theUrl, false);
-    request.send(null);
-
-    var devices = (JSON.parse(request.responseText).Devices);
-    console.log(devices);
-    console.log(devices[0].address);
-    console.log(devices.lenght);
-
-    for (let i = 0; i < devices.length; i++) {
-        let dropItem = document.createElement("button");
-        dropItem.className = "dropdown-item";
-        dropItem.type = "button";
-        dropItem.innerHTML = devices[i].name;
-        dropItem.id = "di" + i;
-        dropItem.onclick = () => {
-            document.getElementById("dropdown-devices").innerHTML = "Connecting...";
-            connectDevice("http://127.0.0.1:5000/auth/" + devices[i].address);
-
+    handleConnectDevice(url, (err, data) => {
+        if (err != null) {
+            console.error(err);
+        } else {
+            let response = (JSON.parse(data)).Authentication;
+            if (response == "True") {
+                document.getElementById("dropdown-devices").innerHTML = "Connected";
+                getSteps();
+                getHeartRate();
+            }
+            else {
+                document.getElementById("dropdown-devices").innerHTML = "Disconnected";
+            }
         }
-        document.getElementById("dropdown-bluetooth").appendChild(dropItem);
-    }
+    });
 
-
-    console.log(request.responseText);
 }
 
+handleConnectDevice = (url, callback) => {
+    let request = new XMLHttpRequest();
+    request.open("POST", url, true);
+    request.onload = () => {
+        let status = request.status;
+
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
+}
+
+
+
+getBluetoothDevices = (url, callback) => {
+    let request = new XMLHttpRequest();
+    request.open("GET", url, true);
+    request.onload = () => {
+        let status = request.status;
+
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
+}
+
+
+handleSteps = (callback) => {
+    let request = new XMLHttpRequest();
+    request.open("GET", "http://127.0.0.1:5000/steps", true);
+    request.onload = () => {
+        let status = request.status;
+
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
+
+}
+
+getSteps = () => {
+    document.getElementById("steps").innerHTML = "Getting Data";
+    handleSteps((err, data) => {
+        if (err != null) {
+            console.error(err);
+        } else {
+            let steps = (JSON.parse(data)).Steps;
+            let meters = (JSON.parse(data)).Meters;
+            document.getElementById("steps").innerHTML = steps;
+        }
+    });
+}
+
+handleHeartRate = (callback) => {
+    let request = new XMLHttpRequest();
+    request.open("GET", "http://127.0.0.1:5000/heart", true);
+    request.onload = () => {
+        let status = request.status;
+
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
+}
+
+getHeartRate = () => {
+    document.getElementById("heart-rate").innerHTML = "Getting Data";
+    handleSteps((err, data) => {
+        if (err != null) {
+            console.error(err);
+        } else {
+            let heartRate = (JSON.parse(data)).HeartRate;
+            document.getElementById("heart-rate").innerHTML = heartRate;
+        }
+    });
+
+}
 
 dropdownClick = () => {
+    dropdownStatus = document.getElementById("dropdown-devices").innerHTML;
+    console.log(dropdownStatus);
 
-
-    document.getElementById("dropdown-devices").innerHTML = "Searching";
-
-    //Remove old elements
-
-    var elements = document.getElementsByClassName("dropdown-item");
-
-    while (elements[0]) {
-        elements[0].parentNode.removeChild(elements[0]);
+    if (isDropdownActive) {
+        isDropdownActive = false;
+        if (dropdownStatus == "Searching") {
+            document.getElementById("dropdown-devices").innerHTML = "Disconnected";
+        }
     }
+    else {
+        isDropdownActive = true;
+        if (dropdownStatus == "Disconnected") {
+            document.getElementById("dropdown-devices").innerHTML = "Searching";
+        }
 
+    }
     // Refresh elements
 
-    getBluetoothDevices("http://127.0.0.1:5000/devices");
-}
+    getBluetoothDevices("http://127.0.0.1:5000/devices", (err, data) => {
 
-dropdownSelectItem = (e) => {
-    console.log(e);
+        //Remove old elements
+
+        var elements = document.getElementsByClassName("dropdown-item");
+
+        while (elements[0]) {
+            elements[0].parentNode.removeChild(elements[0]);
+        }
+
+        if (err != null) {
+            console.error(err);
+        } else {
+            var devices = (JSON.parse(data).Devices);
+            console.log(devices);
+            console.log(devices[0].address);
+            console.log(devices.lenght);
+
+            for (let i = 0; i < devices.length; i++) {
+                let dropItem = document.createElement("button");
+                dropItem.className = "dropdown-item";
+                dropItem.type = "button";
+                dropItem.innerHTML = devices[i].name;
+                dropItem.id = "di" + i;
+                dropItem.onclick = () => {
+                    document.getElementById("dropdown-devices").innerHTML = "Connecting...";
+                    connectDevice("http://127.0.0.1:5000/auth/" + devices[i].address);
+
+                }
+                document.getElementById("dropdown-bluetooth").appendChild(dropItem);
+            }
+
+
+            let dropStatus = document.getElementById("dropdown-devices").innerHTML;
+
+            console.log(dropStatus);
+
+            if (dropStatus == "Connected") {
+
+                let dividerDiv = document.createElement("div");
+                dividerDiv.className = "dropdown-divider";
+                document.getElementById("dropdown-bluetooth").appendChild(dividerDiv);
+
+                let dropItemDisconnect = document.createElement("button");
+                dropItemDisconnect.className = "dropdown-item";
+                dropItemDisconnect.type = "button";
+                dropItemDisconnect.innerHTML = "Disconnect";
+                dropItemDisconnect.id = "disconnectBtn";
+                dropItemDisconnect.onclick = () => {
+
+                }
+                document.getElementById("dropdown-bluetooth").appendChild(dropItemDisconnect);
+            }
+
+
+        }
+    });
 }
 
 // Chart Config
@@ -123,6 +247,4 @@ var heartChart = new Chart(ctx2, {
 });
 
 // Trigger Listenings 
-
 document.getElementById("dropdown-devices").addEventListener("click", dropdownClick);
-//document.getElementsByClassName("dropdown-item").addEventListener("click", dropdownSelectItem);
