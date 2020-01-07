@@ -5,6 +5,14 @@ from flask_restful import Resource, Api, reqparse
 
 
 class Authentication(Resource):
+    def get(self):
+        global miband
+
+        if(is_device_connected()):
+            return jsonify({"Status": "Connected"})
+
+        return jsonify({"Status": "Disconnected"})
+
     def post(self, address):
         global miband
 
@@ -15,45 +23,71 @@ class Authentication(Resource):
         return jsonify({"Authentication": str(response)})
 
     def delete(self):
-        return jsonify({"Status": "fdf"})
+        global miband
+
+        if(is_device_connected()):
+            miband.disconnect()
 
 
 class MibandSteps(Resource):
     def get(self):
         global miband
-        print(miband)
-        response = miband.get_steps()
-        return jsonify(response)
+
+        if(is_device_connected()):
+            response = miband.get_steps()
+            return jsonify({
+                "Steps": response[0],
+                "Meters": response[1]})
+        else:
+            return jsonify({
+                "Steps": "DEVICE NOT CONNECT",
+                "Meters": "DEVICE NOT CONNECT"})
 
 
 class MibandBattery(Resource):
     def get(self):
         global miband
-        battery = miband.get_battery_info()
-        return jsonify({"Battery", battery})
+
+        if(is_device_connected()):
+            battery = miband.get_battery_info()
+            return jsonify({battery})
+        else:
+            return jsonify({"Battery", "DEVICE NOT CONNECT"})
 
 
 class MibandHeartRate(Resource):
     def get(self):
-        global miband, heartRate
-        miband.start_raw_data_realtime(heart_measure_callback=handleHeartRate)
+        global miband, heart_rate
 
-        return jsonify({"HeartRate": heartRate})
+        if(is_device_connected()):
+            miband.start_raw_data_realtime(
+                heart_measure_callback=handle_heart_rate)
+            return jsonify({"HeartRate": heart_rate})
+
+        return jsonify({"HeartRate": "DEVICE NOT CONNECT"})
 
 
 class BluetoothDevices(Resource):
     def get(self):
+
         bluetoothScanner = BluetoothScanner()
         return jsonify({"Devices": bluetoothScanner.discover()})
 
 
-def handleHeartRate(rate):
-    global heartRate
-    heartRate = rate
+def is_device_connected():
+    global miband
+    if(miband == None):
+        return False
+    return miband.is_device_connected()
+
+
+def handle_heart_rate(rate):
+    global heart_rate
+    heart_rate = rate
 
 
 miband = None
-heartRate = None
+heart_rate = None
 
 app = Flask(__name__)
 api = Api(app)

@@ -65,27 +65,34 @@ class AuthenticationDelegate(DefaultDelegate):
 
 class BluetoothScanner():
     def discover(self):
-        scanner = Scanner().withDelegate(ScanDelegate())
-        devices = scanner.scan(10.0)
-        devicesList = []
 
-        for dev in devices:
-            device = {}
-            nameFlag = False
-            print("Device %s (%s), RSSI=%d dB" %
-                  (dev.addr, dev.addrType, dev.rssi))
-            for (adtype, desc, value) in dev.getScanData():
-                if(desc == "Complete Local Name"):
-                    nameFlag = True
+        try:
+            scanner = Scanner().withDelegate(ScanDelegate())
+            devices = scanner.scan(10.0)
+            devicesList = []
+
+            for dev in devices:
+                device = {}
+                nameFlag = False
+                print("Device %s (%s), RSSI=%d dB" %
+                    (dev.addr, dev.addrType, dev.rssi))
+                for (adtype, desc, value) in dev.getScanData():
+                    if(desc == "Complete Local Name"):
+                        nameFlag = True
+                        device["name"] = value
+                        device["address"] = dev.addr
+                        devicesList.append(device)
+                if(nameFlag == False):
                     device["name"] = value
                     device["address"] = dev.addr
                     devicesList.append(device)
-            if(nameFlag == False):
-                device["name"] = value
-                device["address"] = dev.addr
-                devicesList.append(device)
 
-        return devicesList
+            return devicesList
+        except:
+               device = {}
+               device["name"] = "ERROR"
+               device["address"] = "CHECK BLUETOOTH CONNECTION"
+               return [device] 
 
 
 class MiBand3(Peripheral):
@@ -206,10 +213,10 @@ class MiBand3(Peripheral):
             "status": status,
             "level": level,
             "last_level": last_level,
-            "last_level": last_level,
             "last_charge": datetime_last_charge,
             "last_off": datetime_last_off
         }
+        print(res)
         return res
 
     # Queue ###################################################################
@@ -271,6 +278,15 @@ class MiBand3(Peripheral):
             self._log.error(self.state)
             return False
 
+    def is_device_connected(self):
+        try:
+            response = self.getState()
+            print(response)
+            return True if(response == 'conn') else False
+
+        except:
+            return False
+
     def get_battery_info(self):
         char = self.svc_1.getCharacteristics(UUIDS.CHARACTERISTIC_BATTERY)[0]
         return self._parse_battery_response(char.read())
@@ -288,9 +304,7 @@ class MiBand3(Peripheral):
         steps = struct.unpack('h', a[1:3])[0] if (len(a) >= 3) else None
         meters = struct.unpack('h', a[5:7])[0] if len(a) >= 7 else None
 
-        return {
-            "Steps": steps,
-            "Meters": meters}
+        return [steps, meters]
 
     def send_alert(self, _type):
         svc = self.getServiceByUUID(UUIDS.SERVICE_ALERT)
