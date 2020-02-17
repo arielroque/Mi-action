@@ -22,6 +22,13 @@ class ScanDelegate(DefaultDelegate):
         elif isNewData:
             print("Received new data from"), dev.addr
 
+class MyDelegate(DefaultDelegate):
+    def __init__(self):
+        DefaultDelegate.__init__(self)
+
+    def handleNotification(self, cHandle, data):
+        print("A notification was received: %s" %data)
+
 
 class AuthenticationDelegate(DefaultDelegate):
 
@@ -32,6 +39,10 @@ class AuthenticationDelegate(DefaultDelegate):
         self.device = device
 
     def handleNotification(self, hnd, data):
+
+        print("HND")
+        print(hnd)
+
         if hnd == self.device._char_auth.getHandle():
             if data[:3] == b'\x10\x01\x01':
                 self.device._req_rdn()
@@ -75,7 +86,7 @@ class BluetoothScanner():
                 device = {}
                 nameFlag = False
                 print("Device %s (%s), RSSI=%d dB" %
-                    (dev.addr, dev.addrType, dev.rssi))
+                      (dev.addr, dev.addrType, dev.rssi))
                 for (adtype, desc, value) in dev.getScanData():
                     if(desc == "Complete Local Name"):
                         nameFlag = True
@@ -89,10 +100,10 @@ class BluetoothScanner():
 
             return devicesList
         except:
-               device = {}
-               device["name"] = "ERROR"
-               device["address"] = "CHECK BLUETOOTH CONNECTION"
-               return [device] 
+            device = {}
+            device["name"] = "ERROR"
+            device["address"] = "CHECK BLUETOOTH CONNECTION"
+            return [device]
 
 
 class MiBand3(Peripheral):
@@ -123,6 +134,9 @@ class MiBand3(Peripheral):
         self.svc_1 = self.getServiceByUUID(UUIDS.SERVICE_MIBAND1)
         self.svc_2 = self.getServiceByUUID(UUIDS.SERVICE_MIBAND2)
         self.svc_heart = self.getServiceByUUID(UUIDS.SERVICE_HEART_RATE)
+
+        self.button = self.svc_2.getCharacteristics(
+            UUIDS.CHARACTERISTIC_DEVICEEVENT)
 
         self._char_auth = self.svc_2.getCharacteristics(
             UUIDS.CHARACTERISTIC_AUTH)[0]
@@ -187,18 +201,23 @@ class MiBand3(Peripheral):
         return res
 
     def _parse_date(self, bytes):
-        year = struct.unpack('h', bytes[0:2])[0] if len(bytes) >= 2 else None
-        month = struct.unpack('b', bytes[2])[0] if len(bytes) >= 3 else None
-        day = struct.unpack('b', bytes[3])[0] if len(bytes) >= 4 else None
-        hours = struct.unpack('b', bytes[4])[0] if len(bytes) >= 5 else None
-        minutes = struct.unpack('b', bytes[5])[0] if len(bytes) >= 6 else None
-        seconds = struct.unpack('b', bytes[6])[0] if len(bytes) >= 7 else None
+        year = struct.unpack('h', bytes[0:2])[0] if (len(bytes) >= 2) else None
+        month = struct.unpack('b', bytes[2])[0] if (len(bytes) >= 3) else None
+        day = struct.unpack('b', bytes[3])[0] if (len(bytes) >= 4) else None
+        hours = struct.unpack('b', bytes[4])[0] if (len(bytes) >= 5) else None
+        minutes = struct.unpack('b', bytes[5])[0] if (
+            len(bytes) >= 6) else None
+        seconds = struct.unpack('b', bytes[6])[0] if (
+            len(bytes) >= 7) else None
         day_of_week = struct.unpack('b', bytes[7])[
-            0] if len(bytes) >= 8 else None
+            0] if (len(bytes) >= 8) else None
         fractions256 = struct.unpack('b', bytes[8])[
-            0] if len(bytes) >= 9 else None
+            0] if (len(bytes) >= 9) else None
 
         return {"date": datetime(*(year, month, day, hours, minutes, seconds)), "day_of_week": day_of_week, "fractions256": fractions256}
+
+    def _parse_button_response(self, bytes):
+        print(bytes)
 
     def _parse_battery_response(self, bytes):
         level = struct.unpack('b', bytes[1])[0] if len(bytes) >= 2 else None
@@ -213,10 +232,10 @@ class MiBand3(Peripheral):
             "status": status,
             "level": level,
             "last_level": last_level,
+            "last_level": last_level,
             "last_charge": datetime_last_charge,
             "last_off": datetime_last_off
         }
-        print(res)
         return res
 
     # Queue ###################################################################
@@ -287,6 +306,42 @@ class MiBand3(Peripheral):
         except:
             return False
 
+    def listening_button(self):
+
+        self.setDelegate(MyDelegate())
+
+        """svc = self.getServiceByUUID(UUIDS.SERVICE_MIBAND1)
+        char  = svc.getCharacteristics(
+            UUIDS.CHARACTERISTIC_DEVICEEVENT)[0]
+
+        char_d = char.getDescriptors(
+            forUUID=UUIDS.NOTIFICATION_DESCRIPTOR)[0]
+
+        char_d.write(b'\x01\x00', True)       
+
+        while True:
+            try:
+               self.waitForNotifications(1.0)
+               print(char)
+               print("Listening...")
+            except:
+                 print("Merda...")"""
+
+                # Setup to turn notifications on, e.g.
+        svc = self.getServiceByUUID(UUIDS.SERVICE_MIBAND1)
+        ch = svc.getCharacteristics(UUIDS.CHARACTERISTIC_DEVICEEVENT)[0]
+        print(ch)
+
+        #ch.write(b'\x01\x00', True)
+
+        while True:
+            if self.waitForNotifications(1.0):
+                # handleNotification() was called
+                continue
+
+            print("Waiting...")
+            # Perhaps do something else here
+
     def get_battery_info(self):
         char = self.svc_1.getCharacteristics(UUIDS.CHARACTERISTIC_BATTERY)[0]
         return self._parse_battery_response(char.read())
@@ -302,7 +357,7 @@ class MiBand3(Peripheral):
         a = char.read()
 
         steps = struct.unpack('h', a[1:3])[0] if (len(a) >= 3) else None
-        meters = struct.unpack('h', a[5:7])[0] if len(a) >= 7 else None
+        meters = struct.unpack('h', a[5:7])[0] if (len(a) >= 7) else None
 
         return [steps, meters]
 

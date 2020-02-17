@@ -10,6 +10,12 @@ class Immutable(type):
         raise Exception("You can't modify immutable object")
 
 
+class General(object):
+
+    __metaclass__ = Immutable
+    DATABASE_NAME = "database.db"
+
+
 class UUIDS(object):
 
     __metaclass__ = Immutable
@@ -51,6 +57,7 @@ class UUIDS(object):
     CHARACTERISTIC_DFU_FIRMWARE = "00001531-0000-3512-2118-0009af100700"
     CHARACTERISTIC_DFU_FIRMWARE_WRITE = "00001532-0000-3512-2118-0009af100700"
 
+
 class AUTH_STATES(object):
 
     __metaclass__ = Immutable
@@ -69,6 +76,7 @@ class ALERT_TYPES(object):
     NONE = '\x00'
     MESSAGE = '\x01'
     PHONE = '\x02'
+
 
 class QUEUE_TYPES(object):
 

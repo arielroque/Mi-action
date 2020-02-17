@@ -18,13 +18,14 @@ connectDevice = (url) => {
 
     handleConnectDevice(url, (err, data) => {
         if (err != null) {
+            document.getElementById("dropdown-devices").innerHTML = "Disconnected";
+            //put toaster to notify
             console.error(err);
         } else {
             let response = (JSON.parse(data)).Authentication;
             if (response == "True") {
                 document.getElementById("dropdown-devices").innerHTML = "Connected";
-                getSteps();
-                getHeartRate();
+                getInitialData();
             }
             else {
                 document.getElementById("dropdown-devices").innerHTML = "Disconnected";
@@ -32,6 +33,21 @@ connectDevice = (url) => {
         }
     });
 
+}
+
+handleDisconnectDevice = (url, callback) => {
+    let request = new XMLHttpRequest();
+
+    request.open("DELETE", url, true);
+    request.onload = () => {
+        let status = request.status;
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
 }
 
 handleConnectDevice = (url, callback) => {
@@ -113,12 +129,41 @@ handleHeartRate = (callback) => {
 
 getHeartRate = () => {
     document.getElementById("heart-rate").innerHTML = "Getting Data";
+    handleHeartRate((err, data) => {
+        if (err != null) {
+            console.error(err);
+        } else {
+            console.log(JSON.parse(data));
+            let heartRate = (JSON.parse(data)).HeartRate;
+            document.getElementById("heart-rate").innerHTML = heartRate;
+        }
+    });
+
+}
+
+getInitialData = () => {
+
+    document.getElementById("steps").innerHTML = "Getting Data";
+    document.getElementById("heart-rate").innerHTML = "Getting Data";
+
     handleSteps((err, data) => {
         if (err != null) {
             console.error(err);
         } else {
-            let heartRate = (JSON.parse(data)).HeartRate;
-            document.getElementById("heart-rate").innerHTML = heartRate;
+            let steps = (JSON.parse(data)).Steps;
+            let meters = (JSON.parse(data)).Meters;
+            document.getElementById("steps").innerHTML = steps;
+
+            handleHeartRate((err, data) => {
+                if (err != null) {
+                    console.error(err);
+                } else {
+                    console.log(JSON.parse(data));
+                    let heartRate = (JSON.parse(data)).HeartRate;
+                    document.getElementById("heart-rate").innerHTML = heartRate;
+                }
+            });
+
         }
     });
 
@@ -154,7 +199,7 @@ dropdownClick = () => {
         }
 
         if (err != null) {
-            console.error(err);
+            console.error("Check Bluetooth Connection");
         } else {
             var devices = (JSON.parse(data).Devices);
             console.log(devices);
@@ -192,6 +237,21 @@ dropdownClick = () => {
                 dropItemDisconnect.innerHTML = "Disconnect";
                 dropItemDisconnect.id = "disconnectBtn";
                 dropItemDisconnect.onclick = () => {
+
+                    handleDisconnectDevice("http://127.0.0.1:5000/auth", (err, data) => {
+                        if (err != null) {
+                            //put toaster to notify
+                            console.error(err);
+                        } else {
+                            let response = (JSON.parse(data)).Authentication;
+                            if (response == "True") {
+                                document.getElementById("dropdown-devices").innerHTML = "Connected";
+                            }
+                            else {
+                                document.getElementById("dropdown-devices").innerHTML = "Disconnected";
+                            }
+                        }
+                    });
 
                 }
                 document.getElementById("dropdown-bluetooth").appendChild(dropItemDisconnect);

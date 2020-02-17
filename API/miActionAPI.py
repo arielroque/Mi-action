@@ -1,7 +1,10 @@
 import sys
+import os
+import sqlite3
 from controller import MiBand3, BluetoothScanner
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api, reqparse
+from constants import General
 
 
 class Authentication(Resource):
@@ -48,11 +51,12 @@ class MibandBattery(Resource):
     def get(self):
         global miband
 
-        if(is_device_connected()):
+        """if(is_device_connected()):
             battery = miband.get_battery_info()
             return jsonify({battery})
         else:
-            return jsonify({"Battery", "DEVICE NOT CONNECT"})
+            return jsonify({"Battery", "DEVICE NOT CONNECT"})"""
+        miband.listening_button()
 
 
 class MibandHeartRate(Resource):
@@ -72,6 +76,22 @@ class BluetoothDevices(Resource):
 
         bluetoothScanner = BluetoothScanner()
         return jsonify({"Devices": bluetoothScanner.discover()})
+
+
+def prepare_database():
+    folders = os.listdir()
+
+    if(General.DATABASE_NAME not in folders):
+        conn = sqlite3.connect(General.DATABASE_NAME)
+        c = conn.cursor()
+
+        sql = """CREATE TABLE users(
+		          id integer unique primary key autoincrement,
+		           name text)
+		      """
+        c.executescript(sql)
+        conn.commit()
+        conn.close()
 
 
 def is_device_connected():
