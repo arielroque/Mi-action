@@ -1,4 +1,4 @@
-![MiAction](https://user-images.githubusercontent.com/17733053/71496046-d926e400-282f-11ea-81be-760ead702e5f.png)
+![MiAction](https://user-images.githubusercontent.com/17733053/75099039-cc0e4300-559b-11ea-9e00-1ccb22325e7a.png)
 
 ## Installation
 
