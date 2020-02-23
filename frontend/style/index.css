@@ -1,7 +1,45 @@
 
 body{
-    background-color:#6E6A78;
+    background-color:#23282E;
+}
 
+.button{
+    color: white;
+    background-color:#E07C5C;
+    font-weight: 800;
+}
+
+.title{
+    font-size: 60px;
+    font-weight: 600;
+    color: white;
+}
+
+.data-info{
+    font-size: 50px;
+    font-weight:800;
+    color: white;
+}
+.data-type{
+    font-size: 15px;
+    font-weight:400;
+    color: white;
+}
+
+.section-name{
+    color: white;
+    font-size: 15px;
+}
+
+.section-title{
+    color: white;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+.section-icon{
+    width: 80px;
+    height: 80px;
 }
 
 .dropdown{
@@ -20,7 +58,7 @@ body{
 
 .mi-features{
     padding-top: 40px;
-    background-color: #E07C5C;
+    background-color: #23282E;
 }
 
 .icon {
@@ -36,6 +74,14 @@ body{
     justify-content: center;
     border-radius: 50%;
 }
-.chart-block{
+
+.block{
+    background-color: #454C55;
     margin-top: 20px;
+}
+
+#device-card{
+    background-color:#D88367;
+    margin-top: 10px;
+    height: 200px;
 }

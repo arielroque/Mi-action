@@ -271,6 +271,7 @@ var stepsChart = new Chart(ctx1, {
         datasets: [{
             label: 'Steps',
             data: [12, 39, 40, 5, 2, 3, 0],
+            backgroundColor: 'rgb(230,185,51)',
             borderWidth: 1
         }]
     },
@@ -292,6 +293,7 @@ var heartChart = new Chart(ctx2, {
         datasets: [{
             label: 'Heart',
             data: [12, 39, 40, 5, 2, 3, 0],
+            backgroundColor: 'rgb(211,79,92)',
             borderWidth: 1
         }]
     },
