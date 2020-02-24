@@ -6,6 +6,12 @@
 // process.
 
 
+
+//Initial State
+
+let device = document.getElementById("device-card");
+device.style.display = "none";
+
 // Variables
 
 let isDropdownActive = false;
@@ -25,6 +31,7 @@ connectDevice = (url) => {
             let response = (JSON.parse(data)).Authentication;
             if (response == "True") {
                 document.getElementById("dropdown-devices").innerHTML = "Connected";
+
                 getInitialData();
             }
             else {
@@ -33,6 +40,17 @@ connectDevice = (url) => {
         }
     });
 
+}
+
+deviceContainerVisibility = () => {
+
+    let device = document.getElementById("device-card");
+    if (device.style.display === "none") {
+        device.style.display = "block";
+    }
+    else {
+        device.style.display = "none";
+    }
 }
 
 handleDisconnectDevice = (url, callback) => {
@@ -143,8 +161,8 @@ getHeartRate = () => {
 
 getInitialData = () => {
 
-    document.getElementById("steps").innerHTML = "Getting Data";
-    document.getElementById("heart-rate").innerHTML = "Getting Data";
+    document.getElementById("steps").innerHTML = "Getting";
+    document.getElementById("heart-rate").innerHTML = "Getting";
 
     handleSteps((err, data) => {
         if (err != null) {
@@ -268,10 +286,11 @@ var ctx1 = document.getElementById('stepsChart');
 var stepsChart = new Chart(ctx1, {
     type: 'line',
     data: {
+        labels: ["15/04", "1600", "1700", "1750", "1800", "1850", "1900", "1950", "1999", "2050"],
         datasets: [{
-            label: 'Steps',
-            data: [12, 39, 40, 5, 2, 3, 0],
-            borderWidth: 1
+            data: [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478],
+            label: "Steps",
+            backgroundColor: 'rgb(230,185,51)'
         }]
     },
     options: {
@@ -292,6 +311,7 @@ var heartChart = new Chart(ctx2, {
         datasets: [{
             label: 'Heart',
             data: [12, 39, 40, 5, 2, 3, 0],
+            backgroundColor: 'rgb(211,79,92)',
             borderWidth: 1
         }]
     },
@@ -308,3 +328,5 @@ var heartChart = new Chart(ctx2, {
 
 // Trigger Listenings 
 document.getElementById("dropdown-devices").addEventListener("click", dropdownClick);
+document.getElementById("btn-steps").addEventListener("click", getSteps);
+document.getElementById("btn-heart").addEventListener("click", getHeartRate);
