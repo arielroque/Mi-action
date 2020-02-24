@@ -64,7 +64,6 @@ class MibandSteps(Resource):
                 "Steps": "DEVICE NOT CONNECT",
                 "Meters": "DEVICE NOT CONNECT"})
 
-
 class MibandBattery(Resource):
     def get(self):
         global miband
