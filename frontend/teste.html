@@ -1,0 +1,177 @@
+<html>
+
+<head>
+    <title>Instagram Feed</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="instagram.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f3f3f3;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .block {
+            width: 60%;
+            height: auto;
+            margin: auto;
+            background-color: #FFFFFF;
+        }
+
+        .title {
+            font-family: 'viga';
+            text-align: center;
+            font-size: 100px;
+        }
+
+        .subtitle {
+            font-family: 'viga';
+            text-align: center;
+            font-size: 40px;
+        }
+        
+        .comment{
+        font-size: 15px;
+            color: #999;
+        }
+
+        .feed {
+            width: 80%;
+            height: auto;
+            background-color: #FFFFFF;
+            margin: 80px auto;
+            padding-bottom: 10px;
+        }
+
+        .feed .username {
+            padding: 10px 30px 0px 30px;
+            display: flex;
+            flex-flow: row;
+        }
+
+        .feed .username .image,
+        .feed .username .image img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        .feed .username a {
+            color: #000000;
+            font-weight: 400;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .feed .username .id {
+            margin: 10px 15px;
+        }
+
+        .feed .post {
+            width: 100%;
+            height: 300px;
+            margin: 10px 0px;
+        }
+
+        .feed .post img {
+            width: 100%;
+            height: inherit;
+        }
+
+        .feed .btn-group {
+            padding: 0px 10px;
+        }
+
+        .feed .btn-group button {
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .feed .btn-group .btn-bookmark {
+            float: right;
+        }
+
+        .feed .caption {
+            font-size: 13px;
+            padding: 0px 20px;
+        }
+
+        .feed .caption .like {
+            font-weight: bold;
+        }
+
+        .feed .caption .id {
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .feed .caption .time {
+            font-size: 10px;
+            color: #999;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="block">
+        <table cellpadding="0" cellspacing="0" border="0" width="88%"
+            style="width: 88% !important; min-width: 88%; max-width: 88%; margin-left: 30px;">
+            <tr>
+                <td align="left" valign="top">
+                    <div style="height: 39px; line-height: 39px; font-size: 37px;">&nbsp;</div><a href="#"
+                        target="_blank" style="display: block; max-width: 128px;"> <img
+                            src="https://user-images.githubusercontent.com/17733053/73387248-05120b00-42af-11ea-82e6-0841ba619b1f.png"
+                            alt="img" width="308" border="0" style="display: block; width: 128px;" /> </a>
+                    <div style="height: 73px; line-height: 73px; font-size: 71px;">&nbsp;</div>
+                </td>
+            </tr>
+        </table>
+
+        <div align="center">
+            <span
+                style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #1a1a1a; font-size: 45px; line-height: 45px; font-weight: 300; letter-spacing: -1.5px;">Registro
+                Digital</span>
+
+        </div>
+        <div class="feed">
+            <section class="username">
+                <div class="image">
+                    <a href="https://www.instagram.com/kentury_/"><img src="$profileURL"></a>
+                </div>
+                <div class="id">
+                    <a href="$profileURL">$username</a>
+                </div>
+            </section>
+            <section class="post">
+                <img src="$postImageURL">
+            </section>
+            <section class="btn-group">
+                <button type="button" class="btn-love"><i class="far fa-heart fa-lg"></i></button>
+                <button type="button" class="btn-comment"><i class="far fa-comment fa-lg"></i></button>
+                <button type="button" class="btn-share"><i class="fas fa-share fa-lg "></i></button>
+                <button type="button" class="btn-bookmark"><i class="far fa-bookmark fa-lg"></i></button>
+            </section>
+            <section class="caption">
+                <p class="like">$likes likes</p>
+                <p><b><a class="id" href="$profileURL">$username</a></b> $postName</p>
+                <p class="time">$date</p>
+            </section>
+            $comments
+        </div> 
+        
+        <div align="center" style="background-color: #f3f3f3">
+         <font face="'Source Sans Pro', sans-serif" color="#868686"
+                                    style="font-size: 17px; line-height: 20px;"> <span
+                                        style="font-family: 'Source Sans Pro', Arial, Tahoma, Geneva, sans-serif; color: #868686; font-size: 17px; line-height: 20px;">Copyright
+                                        &copy; 2020 EverData. All&nbsp;Rights&nbsp;Reserved.<br>The
+                                        True Blockchain Mobile App!</span> </font>
+
+        
+        </div>
+    </div>
+</body>
+</html>

@@ -56,13 +56,16 @@ class MibandSteps(Resource):
 
         if(is_device_connected()):
             response = miband.get_steps()
+            insert_steps(response[0])
             return jsonify({
                 "Steps": response[0],
                 "Meters": response[1]})
+
         else:
             return jsonify({
-                "Steps": "DEVICE NOT CONNECT",
-                "Meters": "DEVICE NOT CONNECT"})
+                "Steps": "Device not connect",
+                "Meters": "Device not connect"})
+
 
 class MibandBattery(Resource):
     def get(self):
@@ -72,7 +75,7 @@ class MibandBattery(Resource):
             battery = miband.get_battery_info()
             return jsonify({battery})
         else:
-            return jsonify({"Battery", "DEVICE NOT CONNECT"})"""
+            return jsonify({"Battery", "Device not connect"})"""
         miband.listening_button()
 
 
@@ -83,9 +86,10 @@ class MibandHeartRate(Resource):
         if(is_device_connected()):
             miband.start_raw_data_realtime(
                 heart_measure_callback=handle_heart_rate)
+            insert_heart_rate(heart_rate)
             return jsonify({"HeartRate": heart_rate})
 
-        return jsonify({"HeartRate": "DEVICE NOT CONNECT"})
+        return jsonify({"HeartRate": "Device not connect"})
 
 
 class BluetoothDevices(Resource):
@@ -96,7 +100,7 @@ class BluetoothDevices(Resource):
 
 
 def get_heart_data():
-    conn = sqlite3.connect("../data/"+General.DATABASE_NAME)
+    conn = sqlite3.connect("data/"+General.DATABASE_NAME)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -139,7 +143,7 @@ def get_heart_data():
 
 def get_steps_data():
 
-    conn = sqlite3.connect("../data/"+General.DATABASE_NAME)
+    conn = sqlite3.connect("data/"+General.DATABASE_NAME)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -149,6 +153,7 @@ def get_steps_data():
     stepData = collections.OrderedDict()
 
     for line in cursor.fetchall():
+        print(line)
         if(line[2] not in stepData.keys()):
             l = []
             l.append(line[1])
@@ -183,9 +188,9 @@ def get_steps_data():
 
 def insert_heart_rate(heart_rate):
 
-    date = datetime.today().strftime('%Y-%m-%d')
+    date = datetime.today().strftime('%d/%m')
 
-    conn = sqlite3.connect("../data/"+General.DATABASE_NAME)
+    conn = sqlite3.connect("data/"+General.DATABASE_NAME)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -198,10 +203,9 @@ def insert_heart_rate(heart_rate):
 
 
 def insert_steps(steps):
+    date = datetime.today().strftime('%d/%m')
 
-    date = datetime.today().strftime('%Y-%m-%d')
-
-    conn = sqlite3.connect("../data/"+General.DATABASE_NAME)
+    conn = sqlite3.connect("data/"+General.DATABASE_NAME)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -214,15 +218,12 @@ def insert_steps(steps):
 
 
 def prepare_database():
-    folders = os.listdir("../data")
-
+    folders = os.listdir("data")
     print(folders)
 
     if(General.DATABASE_NAME not in folders):
-        conn = sqlite3.connect("../data/"+General.DATABASE_NAME)
+        conn = sqlite3.connect("data/"+General.DATABASE_NAME)
         c = conn.cursor()
-
-        print("entrei")
 
         sql = """CREATE TABLE steps(
 		          id INTEGER unique PRIMARY KEY AUTOINCREMENT,
@@ -273,7 +274,6 @@ api.add_resource(MibandStepsPersistence, '/stepsPersistence')
 api.add_resource(MibandHeartPersistence, '/heartPersistence')
 
 prepare_database()
-
 
 if(__name__ == '__main__'):
     app.run(debug=True)

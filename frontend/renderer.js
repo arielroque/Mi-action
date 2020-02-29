@@ -1,21 +1,18 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// No Node.js APIs are available in this process because
-// `nodeIntegration` is turned off. Use `preload.js` to
-// selectively enable features needed in the rendering
-// process.
-
-
-
 //Initial State
 
 let device = document.getElementById("device-card");
+$("#success-alert").hide();
 device.style.display = "none";
 
 // Variables
 
 let isDropdownActive = false;
 
+let stepsDates = []
+let stepsData = [];
+
+let heartDates = [];
+let heartData = [];
 
 // Functions
 
@@ -31,7 +28,7 @@ connectDevice = (url) => {
             let response = (JSON.parse(data)).Authentication;
             if (response == "True") {
                 document.getElementById("dropdown-devices").innerHTML = "Connected";
-
+                deviceModelContainer();
                 getInitialData();
             }
             else {
@@ -42,7 +39,7 @@ connectDevice = (url) => {
 
 }
 
-deviceContainerVisibility = () => {
+deviceModelContainer = () => {
 
     let device = document.getElementById("device-card");
     if (device.style.display === "none") {
@@ -118,16 +115,19 @@ handleSteps = (callback) => {
 }
 
 getSteps = () => {
-    document.getElementById("steps").innerHTML = "Getting Data";
-    handleSteps((err, data) => {
-        if (err != null) {
-            console.error(err);
-        } else {
-            let steps = (JSON.parse(data)).Steps;
-            let meters = (JSON.parse(data)).Meters;
-            document.getElementById("steps").innerHTML = steps;
-        }
-    });
+    if (document.getElementById("heart-rate").innerHTML != "Getting") {
+        document.getElementById("steps").innerHTML = "Getting";
+        handleSteps((err, data) => {
+            if (err != null) {
+                console.error(err);
+            } else {
+                let steps = (JSON.parse(data)).Steps;
+                let meters = (JSON.parse(data)).Meters;
+                document.getElementById("steps").innerHTML = steps;
+                getStepsChartData();
+            }
+        });
+    }
 }
 
 handleHeartRate = (callback) => {
@@ -146,17 +146,84 @@ handleHeartRate = (callback) => {
 }
 
 getHeartRate = () => {
-    document.getElementById("heart-rate").innerHTML = "Getting Data";
-    handleHeartRate((err, data) => {
+    if (document.getElementById("steps").innerHTML != "Getting") {
+        document.getElementById("heart-rate").innerHTML = "Getting";
+        handleHeartRate((err, data) => {
+            if (err != null) {
+                console.error(err);
+            } else {
+                console.log(JSON.parse(data));
+                let heartRate = (JSON.parse(data)).HeartRate;
+                document.getElementById("heart-rate").innerHTML = heartRate;
+                getHeartChartData();
+            }
+        });
+    }
+
+}
+
+handleHeartChartData = (callback) => {
+    let request = new XMLHttpRequest();
+
+    request.open("GET", "http://127.0.0.1:5000/heartPersistence", true);
+    request.onload = () => {
+        let status = request.status;
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
+}
+
+getHeartChartData = () => {
+    handleHeartChartData((err, data) => {
         if (err != null) {
             console.error(err);
         } else {
             console.log(JSON.parse(data));
-            let heartRate = (JSON.parse(data)).HeartRate;
-            document.getElementById("heart-rate").innerHTML = heartRate;
+            let heartDates = (JSON.parse(data)).date;
+            let heartData = (JSON.parse(data)).heart;
+
+            heartChart.labels = heartDates;
+            heartChart.data.datasets[0].data = heartData;
+            heartChart.update();
         }
     });
+}
 
+
+
+getStepsChartData = () => {
+    handleStepChartData((err, data) => {
+        if (err != null) {
+            console.error(err);
+        } else {
+            console.log(JSON.parse(data));
+            let stepsDates = (JSON.parse(data)).date;
+            let stepsData = (JSON.parse(data)).steps;
+
+            stepsChart.labels = stepsDates;
+            stepsChart.data.datasets[0].data = stepsData;
+            stepsChart.update();
+        }
+    });
+}
+
+handleStepChartData = (callback) => {
+    let request = new XMLHttpRequest();
+
+    request.open("GET", "http://127.0.0.1:5000/stepsPersistence", true);
+    request.onload = () => {
+        let status = request.status;
+        if (status == 200) {
+            callback(null, request.response);
+        } else {
+            callback(status);
+        }
+    }
+    request.send(null);
 }
 
 getInitialData = () => {
@@ -179,6 +246,34 @@ getInitialData = () => {
                     console.log(JSON.parse(data));
                     let heartRate = (JSON.parse(data)).HeartRate;
                     document.getElementById("heart-rate").innerHTML = heartRate;
+
+                    handleStepChartData((err, data) => {
+                        if (err != null) {
+                            console.error(err);
+                        } else {
+                            console.log(JSON.parse(data));
+                            let stepsDates = (JSON.parse(data)).date;
+                            let stepsData = (JSON.parse(data)).steps;
+
+                            stepsChart.labels = stepsDates;
+                            stepsChart.data.datasets[0].data = stepsData;
+                            stepsChart.update();
+
+                            handleHeartChartData((err, data) => {
+                                if (err != null) {
+                                    console.error(err);
+                                } else {
+                                    console.log(JSON.parse(data));
+                                    let heartDates = (JSON.parse(data)).date;
+                                    let heartData = (JSON.parse(data)).heart;
+
+                                    heartChart.labels = heartDates;
+                                    heartChart.data.datasets[0].data = heartData;
+                                    heartChart.update();
+                                }
+                            });
+                        }
+                    });
                 }
             });
 
@@ -286,9 +381,9 @@ var ctx1 = document.getElementById('stepsChart');
 var stepsChart = new Chart(ctx1, {
     type: 'line',
     data: {
-        labels: ["15/04", "1600", "1700", "1750", "1800", "1850", "1900", "1950", "1999", "2050"],
+        labels: [],
         datasets: [{
-            data: [86, 114, 106, 106, 107, 111, 133, 221, 783, 2478],
+            data: [],
             label: "Steps",
             backgroundColor: 'rgb(230,185,51)'
         }]
@@ -310,7 +405,7 @@ var heartChart = new Chart(ctx2, {
     data: {
         datasets: [{
             label: 'Heart',
-            data: [12, 39, 40, 5, 2, 3, 0],
+            data: [],
             backgroundColor: 'rgb(211,79,92)',
             borderWidth: 1
         }]
