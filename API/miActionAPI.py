@@ -31,7 +31,7 @@ class Authentication(Resource):
 
     def delete(self):
         global miband
-        
+
         miband.disconnect()
         os.system("sudo systemctl restart bluetooth.service")
 
@@ -100,7 +100,6 @@ class BluetoothDevices(Resource):
         bluetoothScanner = BluetoothScanner()
         return jsonify({"Devices": bluetoothScanner.discover()})
 
-
 def get_heart_data():
     conn = sqlite3.connect("data/"+General.DATABASE_NAME)
     cursor = conn.cursor()
@@ -142,7 +141,6 @@ def get_heart_data():
 
     return response
 
-
 def get_steps_data():
 
     conn = sqlite3.connect("data/"+General.DATABASE_NAME)
@@ -155,7 +153,6 @@ def get_steps_data():
     stepData = collections.OrderedDict()
 
     for line in cursor.fetchall():
-        print(line)
         if(line[2] not in stepData.keys()):
             l = []
             l.append(line[1])
@@ -221,7 +218,6 @@ def insert_steps(steps):
 
 def prepare_database():
     folders = os.listdir("data")
-    print(folders)
 
     if(General.DATABASE_NAME not in folders):
         conn = sqlite3.connect("data/"+General.DATABASE_NAME)
