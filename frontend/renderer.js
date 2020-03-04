@@ -22,8 +22,6 @@ connectDevice = (url) => {
     handleConnectDevice(url, (err, data) => {
         if (err != null) {
             document.getElementById("dropdown-devices").innerHTML = "Disconnected";
-            //put toaster to notify
-            console.error(err);
         } else {
             let response = (JSON.parse(data)).Authentication;
             if (response == "True") {
@@ -312,7 +310,7 @@ dropdownClick = () => {
         }
 
         if (err != null) {
-            console.error("Check Bluetooth Connection");
+            document.getElementById("dropdown-devices").innerHTML = "Disconnected";
         } else {
             var devices = (JSON.parse(data).Devices);
             console.log(devices);
@@ -353,19 +351,12 @@ dropdownClick = () => {
 
                     handleDisconnectDevice("http://127.0.0.1:5000/auth", (err, data) => {
                         if (err != null) {
-                            //put toaster to notify
                             console.error(err);
                         } else {
+                            document.getElementById("dropdown-devices").innerHTML = "Disconnected";
                             let response = (JSON.parse(data)).Authentication;
-                            if (response == "True") {
-                                document.getElementById("dropdown-devices").innerHTML = "Connected";
-                            }
-                            else {
-                                document.getElementById("dropdown-devices").innerHTML = "Disconnected";
-                            }
                         }
                     });
-
                 }
                 document.getElementById("dropdown-bluetooth").appendChild(dropItemDisconnect);
             }

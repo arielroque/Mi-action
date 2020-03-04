@@ -21,17 +21,19 @@ class Authentication(Resource):
     def post(self, address):
         global miband
 
+        os.system("sudo systemctl restart bluetooth.service")
         miband = MiBand3(address, debug=True)
         miband.setSecurityLevel(level="medium")
         miband.initialize()
         response = miband.authenticate()
+
         return jsonify({"Authentication": str(response)})
 
     def delete(self):
         global miband
-
-        if(is_device_connected()):
-            miband.disconnect()
+        
+        miband.disconnect()
+        os.system("sudo systemctl restart bluetooth.service")
 
 
 class MibandHeartPersistence(Resource):
@@ -63,8 +65,8 @@ class MibandSteps(Resource):
 
         else:
             return jsonify({
-                "Steps": "Device not connect",
-                "Meters": "Device not connect"})
+                "Steps": "0",
+                "Meters": "0"})
 
 
 class MibandBattery(Resource):
@@ -89,7 +91,7 @@ class MibandHeartRate(Resource):
             insert_heart_rate(heart_rate)
             return jsonify({"HeartRate": heart_rate})
 
-        return jsonify({"HeartRate": "Device not connect"})
+        return jsonify({"HeartRate": "0"})
 
 
 class BluetoothDevices(Resource):
