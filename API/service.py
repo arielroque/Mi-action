@@ -17,8 +17,7 @@ class Authentication(Resource):
 
     def post(self, address):
         global miband
-
-        os.system("sudo systemctl restart bluetooth.service")
+        
         miband = MiBand3(address, debug=True)
         miband.setSecurityLevel(level="medium")
         miband.initialize()

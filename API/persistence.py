@@ -121,6 +121,8 @@ class Persistence:
 
     def prepare_database(self):
         folders = os.listdir("data")
+        print("banco")
+        print(folders)
 
         if(General.DATABASE_NAME not in folders):
             conn = sqlite3.connect("data/"+General.DATABASE_NAME)
