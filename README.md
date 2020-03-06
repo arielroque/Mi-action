@@ -5,8 +5,6 @@
         <img src="https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue"
             alt="Python 3.5-3.7"/></a>
     <a href="https://opensource.org/licenses/MIT">
-        <img src="https://david-dm.org/arielroque/Mi-action.svg"/></a>
-    <a href="https://opensource.org/licenses/MIT">
         <img src="https://img.shields.io/badge/License-MIT-yellow.svg"
             alt="License: MIT"/></a>
    
