@@ -44,7 +44,8 @@ This application was tested with success in **Miband 3** and probably works so w
 
 ## Screenshots
 
-![screenshots](https://user-images.githubusercontent.com/17733053/76112763-9ddc2a80-5fc1-11ea-95dc-9655ebee3daf.png)
+
+![screenshoot](https://user-images.githubusercontent.com/17733053/76117785-3cb95480-5fcb-11ea-8388-917ba6dbcad4.png)
 
 ## Contributing
 
