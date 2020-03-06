@@ -14,8 +14,50 @@
 
 ## Installation
 
+Clone  the repository and enter the directory using cd
+```
+git clone https://github.com/arielroque/Mi-action.git
+cd Mi-action
+```
+
+Use venv to avoid dependecies erros, but you may opt not to use it
+```
+virtualenv -p python3.6 venvmiaction
+```
+
+Source the venv to activate it.
+```
+source venvmiaction/bin/activate
+```
+Use pip to install the requirements
 ```
 pip3 install -r requirements.txt
 ```
+## Usage
+
+To start Mi Action application, run the following script:
+```
+sudo ./start.sh
+```
+## Device compatibility
+This application was tested with success in **Miband 3** and probably works so with **Miband 2**. Needs  to check yet the compatibility with **Miband 4**.
 
 ## Screenshots
+
+
+
+## Contributing
+
+Pull request are also welcome , please read  [CONTRIBUTING.md](https://github.com/Benardi/touvlo/blob/master/CONTRIBUTING.md)  for details on our code of conduct, and the process for submitting pull requests to us.
+
+-   Check  [pull_request_template.md](https://github.com/Benardi/touvlo/blob/master/pull_request_template.md)  for the expected format of a pull request
+    
+-   Check  [issue templates](https://github.com/Benardi/touvlo/issues/new/choose)  for the suggested issue formats
+
+## Acknowledgments
+This application was built based on the work of
+
+- **yogeshojha** - MiBand3 [repo]([https://github.com/yogeshojha/MiBand3](https://github.com/yogeshojha/MiBand3))
+
+- **Creotiv** - MiBand2 [repo]([]([https://github.com/creotiv/MiBand2](https://github.com/creotiv/MiBand2)))
+
