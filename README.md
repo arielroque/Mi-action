@@ -48,11 +48,9 @@ This application was tested with success in **Miband 3** and probably works so w
 
 ## Contributing
 
-Pull request are also welcome , please read  [CONTRIBUTING.md](https://github.com/Benardi/touvlo/blob/master/CONTRIBUTING.md)  for details on our code of conduct, and the process for submitting pull requests to us.
-
--   Check  [pull_request_template.md](https://github.com/Benardi/touvlo/blob/master/pull_request_template.md)  for the expected format of a pull request
+Pull request are also welcome , please read  [CONTRIBUTING.md](https://github.com/arielroque/Mi-action/blob/developer/CONTRIBUTING.md)  for details on our code of conduct, and the process for submitting pull requests to us.
     
--   Check  [issue templates](https://github.com/Benardi/touvlo/issues/new/choose)  for the suggested issue formats
+-   Check  [issue templates](https://github.com/arielroque/Mi-action/issues)  for the suggested issue formats
 
 ## Acknowledgments
 This application was built based on the work of
