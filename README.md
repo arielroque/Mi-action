@@ -54,7 +54,7 @@ Pull request are also welcome , please read  [CONTRIBUTING.md](https://github.co
 ## Acknowledgments
 This application was built based on the work of
 
-- **yogeshojha** - MiBand3 [repo](https://github.com/yogeshojha/MiBand3](https://github.com/yogeshojha/MiBand3)
+- **yogeshojha** -[MiBand3](https://github.com/yogeshojha/MiBand3](https://github.com/yogeshojha/MiBand3)
 
-- **Creotiv** - MiBand2 [repo](https://github.com/creotiv/MiBand2)
+- **Creotiv** - [MiBand2](https://github.com/creotiv/MiBand2)
 
