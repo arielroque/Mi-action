@@ -16,7 +16,7 @@ let heartData = [];
 
 // Functions
 
-connectDevice = (url) => {
+connectDevice = (url, name) => {
     document.getElementById("dropdown-devices").innerHTML = "Connecting";
 
     handleConnectDevice(url, (err, data) => {
@@ -26,7 +26,7 @@ connectDevice = (url) => {
             let response = (JSON.parse(data)).Authentication;
             if (response == "True") {
                 document.getElementById("dropdown-devices").innerHTML = "Connected";
-                deviceModelContainer();
+                deviceModelContainer(name);
                 getInitialData();
             }
             else {
@@ -37,8 +37,8 @@ connectDevice = (url) => {
 
 }
 
-deviceModelContainer = () => {
-
+deviceModelContainer = (name) => {
+    document.getElementById("device-title").innerHTML = name;
     let device = document.getElementById("device-card");
     if (device.style.display === "none") {
         device.style.display = "block";
@@ -325,7 +325,7 @@ dropdownClick = () => {
                 dropItem.id = "di" + i;
                 dropItem.onclick = () => {
                     document.getElementById("dropdown-devices").innerHTML = "Connecting...";
-                    connectDevice("http://127.0.0.1:5000/auth/" + devices[i].address);
+                    connectDevice("http://127.0.0.1:5000/auth/" + devices[i].address, devices[i].name);
 
                 }
                 document.getElementById("dropdown-bluetooth").appendChild(dropItem);
