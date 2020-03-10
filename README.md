@@ -27,16 +27,29 @@ Source the venv to activate it.
 ```
 source venvmiaction/bin/activate
 ```
-Use pip to install the requirements
+Use pip to install the requirements from backend
 ```
 pip3 install -r requirements.txt
+
+```
+Install node dependencies from frontend
+```
+cd frontend
+npm install
 ```
 ## Usage
+
+Allow the initializer script to run on virtualenv
+```
+chmod 777 ./start.sh
+```
 
 To start Mi Action application, run the following script:
 ```
 sudo ./start.sh
 ```
+**Notice:** We need a sudo request to allow use Bluetooth Features
+
 ## Device compatibility
 This application was tested with success in **Miband 3** and probably works so with **Miband 2**. Needs  to check yet the compatibility with **Miband 4**.
 
