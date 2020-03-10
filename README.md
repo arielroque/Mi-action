@@ -5,8 +5,6 @@
         <img src="https://img.shields.io/badge/python-3.5%20%7C%203.6%20%7C%203.7-blue"
             alt="Python 3.5-3.7"/></a>
     <a href="https://opensource.org/licenses/MIT">
-        <img src="https://david-dm.org/arielroque/Mi-action.svg"/></a>
-    <a href="https://opensource.org/licenses/MIT">
         <img src="https://img.shields.io/badge/License-MIT-yellow.svg"
             alt="License: MIT"/></a>
    
@@ -29,35 +27,45 @@ Source the venv to activate it.
 ```
 source venvmiaction/bin/activate
 ```
-Use pip to install the requirements
+Use pip to install the requirements from backend
 ```
 pip3 install -r requirements.txt
+
+```
+Install node dependencies from frontend
+```
+cd frontend
+npm install
 ```
 ## Usage
+
+Allow the initializer script to run on virtualenv
+```
+chmod 777 ./start.sh
+```
 
 To start Mi Action application, run the following script:
 ```
 sudo ./start.sh
 ```
+**Notice:** We need a sudo request to allow use Bluetooth Features
+
 ## Device compatibility
 This application was tested with success in **Miband 3** and probably works so with **Miband 2**. Needs  to check yet the compatibility with **Miband 4**.
 
 ## Screenshots
-
-![screenshots](https://user-images.githubusercontent.com/17733053/76112763-9ddc2a80-5fc1-11ea-95dc-9655ebee3daf.png)
+![screenshoot](https://user-images.githubusercontent.com/17733053/76117785-3cb95480-5fcb-11ea-8388-917ba6dbcad4.png)
 
 ## Contributing
 
-Pull request are also welcome , please read  [CONTRIBUTING.md](https://github.com/Benardi/touvlo/blob/master/CONTRIBUTING.md)  for details on our code of conduct, and the process for submitting pull requests to us.
-
--   Check  [pull_request_template.md](https://github.com/Benardi/touvlo/blob/master/pull_request_template.md)  for the expected format of a pull request
+Pull request are also welcome , please read  [CONTRIBUTING.md](https://github.com/arielroque/Mi-action/blob/developer/CONTRIBUTING.md)  for details on our code of conduct, and the process for submitting pull requests to us.
     
--   Check  [issue templates](https://github.com/Benardi/touvlo/issues/new/choose)  for the suggested issue formats
+-   Check  [issue templates](https://github.com/arielroque/Mi-action/issues)  for the suggested issue formats
 
 ## Acknowledgments
 This application was built based on the work of
 
-- **yogeshojha** - MiBand3 [repo]([https://github.com/yogeshojha/MiBand3](https://github.com/yogeshojha/MiBand3))
+- **yogeshojha** - [MiBand3](https://github.com/yogeshojha/MiBand3)
 
-- **Creotiv** - MiBand2 [repo]([]([https://github.com/creotiv/MiBand2](https://github.com/creotiv/MiBand2)))
+- **Creotiv** - [MiBand2](https://github.com/creotiv/MiBand2)
 
