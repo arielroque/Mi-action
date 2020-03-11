@@ -310,24 +310,7 @@ class MiBand3(Peripheral):
 
         self.setDelegate(MyDelegate())
 
-        """svc = self.getServiceByUUID(UUIDS.SERVICE_MIBAND1)
-        char  = svc.getCharacteristics(
-            UUIDS.CHARACTERISTIC_DEVICEEVENT)[0]
-
-        char_d = char.getDescriptors(
-            forUUID=UUIDS.NOTIFICATION_DESCRIPTOR)[0]
-
-        char_d.write(b'\x01\x00', True)       
-
-        while True:
-            try:
-               self.waitForNotifications(1.0)
-               print(char)
-               print("Listening...")
-            except:
-                 print("Merda...")"""
-
-                # Setup to turn notifications on, e.g.
+        # Setup to turn notifications on, e.g.
         svc = self.getServiceByUUID(UUIDS.SERVICE_MIBAND1)
         ch = svc.getCharacteristics(UUIDS.CHARACTERISTIC_DEVICEEVENT)[0]
         print(ch)
