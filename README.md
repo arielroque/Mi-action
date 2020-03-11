@@ -39,7 +39,7 @@ npm install
 ```
 ## Usage
 
-Allow the initializer script to run on virtualenv
+From the root directory, allow the initializer script to run on virtualenv
 ```
 chmod 777 ./start.sh
 ```
